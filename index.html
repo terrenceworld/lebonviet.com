@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Bon Viêt</title>
+  <link rel="icon" type="image/png" href="./favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #080808;
+      color: #f0e9de;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── CSS Variables ── */
+    :root {
+      --gold:   #c8a96e;
+      --gold-lt: #e0c898;
+      --cream:  #f0e9de;
+      --dark:   #0e0e0e;
+      --card:   #141414;
+      --border: rgba(200,169,110,0.18);
+      --muted:  rgba(240,233,222,0.5);
+      --green:  #0d1a2e;
+    }
+
+    /* ── Utility ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.12s; }
+    .reveal-delay-2 { transition-delay: 0.24s; }
+    .reveal-delay-3 { transition-delay: 0.36s; }
+    .reveal-delay-4 { transition-delay: 0.48s; }
+    .reveal-delay-5 { transition-delay: 0.60s; }
+    .reveal-delay-6 { transition-delay: 0.72s; }
+
+    .gold-line {
+      display: block;
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto 2.5rem;
+    }
+    .gold-line-left { margin: 0 0 2rem; }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 4rem;
+      transition: background 0.4s, backdrop-filter 0.4s, padding 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(18px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid rgba(27,42,74,0.12);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #1B2A4A;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.35em;
+      transition: color 0.3s;
+    }
+    .nav-logo:hover { color: #b8966a; }
+    .nav-logo { display: flex; align-items: center; gap: 0.6rem; }
+    .nav-door { width: 28px; height: 28px; object-fit: contain; }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #8a9bb5;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: #1B2A4A; }
+
+    /* ── Hero ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      background: #ffffff;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+    .hero-content {
+      position: relative;
+      text-align: left;
+      padding: 0 4rem 0 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0;
+    }
+    /* door + title block */
+    .hero-text-block {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      column-gap: 1.6rem;
+      align-items: start;
+      opacity: 0;
+      animation: fadeUp 1.1s 0.2s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero-logo {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .hero-title-subtitle {
+      grid-column: 2;
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 4.5vw, 5rem);
+      white-space: nowrap;
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1B2A4A;
+      margin-bottom: 0.4rem;
+    }
+    .hero-subtitle {
+      font-size: 0.72rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #1B2A4A;
+      margin-bottom: 0;
+    }
+    .hero-gold-line {
+      display: block;
+      width: 48px;
+      height: 1px;
+      background: #b8966a;
+      margin: 1.4rem 0;
+      opacity: 0;
+      animation: fadeUp 1s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      font-weight: 300;
+      color: #3a4f6e;
+      margin-bottom: 2.8rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.85s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero-pillars {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+      opacity: 0;
+      animation: fadeUp 1s 1s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero-pillars span {
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #8a9bb5;
+    }
+    /* ── Hero Right ── */
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    /* ── Hero Slideshow ── */
+    .hero-slideshow {
+      position: relative;
+      overflow: hidden;
+      flex: 1;
+    }
+    .hero-caption {
+      padding: 1.2rem 2rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #1B2A4A;
+      text-align: center;
+      border-top: none;
+      opacity: 0;
+      animation: fadeUp 1s 1s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero-slideshow img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #ffffff;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+    .hero-slideshow img.active { opacity: 1; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* ── Marquee ── */
+    .marquee-section {
+      background: var(--gold);
+      overflow: hidden;
+      padding: 0.9rem 0;
+    }
+    .marquee-track {
+      display: flex;
+      white-space: nowrap;
+      animation: marqueeScroll 22s linear infinite;
+    }
+    .marquee-track span {
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #080808;
+      padding: 0 3rem;
+      font-weight: 600;
+    }
+    .marquee-track span::before {
+      content: '✦';
+      margin-right: 3rem;
+      opacity: 0.4;
+    }
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── Section Shells ── */
+    section { padding: 8rem 4rem; }
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--cream);
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-body {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--muted);
+      max-width: 520px;
+    }
+
+    /* ── About ── */
+    #about {
+      background: #080808;
+      padding: 8rem 0;
+    }
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7rem;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .about-images {
+      position: relative;
+    }
+    .about-img-main {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-width: 520px;
+    }
+    .about-text { }
+    .about-text .section-body { margin-top: 1.5rem; }
+    .about-cta {
+      display: inline-block;
+      margin-top: 2.5rem;
+      padding: 0.85rem 2.2rem;
+      border: 1px solid var(--gold);
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .about-cta:hover {
+      background: var(--gold);
+      color: #080808;
+    }
+
+    /* ── Story / Parallax ── */
+    #story {
+      position: relative;
+      padding: 0;
+      overflow: hidden;
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+    }
+    .story-content {
+      position: relative;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 8rem 4rem;
+    }
+    .story-door-logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin: 0 auto 1.5rem;
+      display: block;
+    }
+    .story-content .section-label { color: #1B2A4A; }
+    .story-content .section-title {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      margin-bottom: 2rem;
+      color: #1B2A4A;
+    }
+    .story-content .section-title em { color: var(--gold); }
+    .story-content .section-body {
+      margin: 0 auto;
+      font-size: 0.88rem;
+      max-width: 560px;
+      text-align: center;
+      color: #3a3a3a;
+    }
+
+    /* ── Services ── */
+    #services {
+      background: #080808;
+      padding: 8rem 8rem;
+    }
+    .services-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2.5rem;
+    }
+    /* Category rows */
+    .svc-category {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .svc-category:last-child { border-bottom: none; }
+    .svc-cat-left {
+      padding: 3.5rem 4rem 3.5rem 0;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .svc-cat-num {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .svc-cat-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .svc-cat-name em { font-style: italic; color: var(--gold); }
+    .svc-cat-tagline {
+      font-size: 0.78rem;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 280px;
+    }
+    .svc-cat-right {
+      padding: 3.5rem 0 3.5rem 4rem;
+    }
+    .svc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .svc-list.single-col { grid-template-columns: 1fr; }
+    .svc-list li {
+      padding: 1rem 1.2rem 1rem 0;
+      border-bottom: 1px solid rgba(200,169,110,0.08);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.5;
+      transition: color 0.2s;
+    }
+    .svc-list li:hover { color: var(--cream); }
+    .svc-list li::before {
+      content: '—';
+      color: var(--gold);
+      opacity: 0.6;
+      flex-shrink: 0;
+      margin-top: 0.05em;
+      font-size: 0.7rem;
+    }
+    /* Specialized expertise block */
+    .svc-expertise-blurb {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: rgba(200,169,110,0.7);
+      margin-bottom: 2rem;
+      line-height: 1.65;
+      max-width: 420px;
+    }
+
+    /* ── Values ── */
+    #values {
+      background: #0c0c0c;
+      padding: 8rem 8rem;
+      border-top: 1px solid var(--border);
+    }
+    .values-intro {
+      max-width: 600px;
+      margin-bottom: 5rem;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+    }
+    .value-card {
+      background: var(--card);
+      padding: 3rem;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .value-card:hover {
+      background: #1a1a1a;
+      transform: translateY(-3px);
+    }
+    .value-num {
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      opacity: 0.6;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .value-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 1rem;
+    }
+    .value-body {
+      font-size: 0.83rem;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── Contact ── */
+    #contact {
+      background: var(--green);
+      padding: 8rem 4rem;
+      text-align: center;
+    }
+    .contact-inner { max-width: 640px; margin: 0 auto; }
+    #contact .section-title { font-size: clamp(2.5rem, 5vw, 4.2rem); margin-bottom: 1rem; }
+    #contact .section-body { margin: 0 auto 3.5rem; text-align: center; max-width: 420px; }
+    .contact-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(200,169,110,0.15);
+      border: 1px solid rgba(200,169,110,0.25);
+    }
+    .form-group {
+      background: rgba(10,30,22,0.8);
+      padding: 0;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      background: #ffffff;
+      border: none;
+      padding: 1.4rem 1.6rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: #1a1a1a;
+      letter-spacing: 0.05em;
+      outline: none;
+      resize: none;
+    }
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+      color: rgba(0,0,0,0.35);
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+    }
+    .contact-form textarea { min-height: 130px; }
+    .submit-btn {
+      grid-column: 1 / -1;
+      background: var(--gold);
+      border: none;
+      padding: 1.3rem 2rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #080808;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, opacity 0.3s;
+    }
+    .submit-btn:hover { background: var(--gold-lt); }
+    .contact-email {
+      display: block;
+      margin-top: 2.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: rgba(200,169,110,0.65);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .contact-email:hover { color: var(--gold); }
+
+    /* ── Footer ── */
+    footer {
+      background: #080808;
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy {
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      color: rgba(240,233,222,0.2);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 2rem; }
+      nav.scrolled { padding: 0.8rem 2rem; }
+      section { padding: 5rem 2rem; }
+      .about-inner { grid-template-columns: 1fr; padding: 0 2rem; gap: 3rem; }
+      #about { padding: 5rem 0; }
+      .about-images { height: 360px; }
+      #services { padding: 5rem 2rem; }
+      .services-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .svc-category { grid-template-columns: 1fr; }
+      .svc-cat-left { border-right: none; border-bottom: 1px solid var(--border); padding: 2.5rem 0 2rem; }
+      .svc-cat-right { padding: 2rem 0 2.5rem; }
+      .svc-list { grid-template-columns: 1fr; }
+      #values { padding: 5rem 2rem; }
+      .values-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+      .contact-form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">LBV</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#story">Heritage</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="./gallery.html">Gallery</a></li>
+      <li><a href="https://www.instagram.com/le_bon_viet/" target="_blank">Instagram ↗</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section id="hero">
+    <div class="hero-content">
+      <div class="hero-text-block">
+        <img class="hero-logo" src="./door.png" alt="Le Bon Viêt logo" />
+        <div class="hero-title-subtitle">
+          <h1 class="hero-title">Le Bon Viêt</h1>
+          <p class="hero-subtitle">Eat Well. Live Fully.</p>
+          <span class="hero-gold-line"></span>
+          <p class="hero-tagline">Refinement guided by soul.</p>
+          <div class="hero-pillars">
+            <span>Flavor</span>
+            <span>Nourishment</span>
+            <span>Community</span>
+            <span>A Brighter Tomorrow</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+    <div class="hero-slideshow" id="heroSlideshow">
+      <img src="./slideshow/gallery_7.jpg" class="active" alt="" />
+      <img src="./slideshow/gallery_8.jpg" alt="" />
+      <img src="./slideshow/gallery_10.jpg" alt="" />
+      <img src="./slideshow/gallery_12.jpg" alt="" />
+      <img src="./slideshow/gallery_13.jpg" alt="" />
+      <img src="./slideshow/gallery_14.jpg" alt="" />
+      <img src="./slideshow/gallery_15.jpg" alt="" />
+      <img src="./slideshow/gallery_16.jpg" alt="" />
+      <img src="./slideshow/gallery_17.jpg" alt="" />
+      <img src="./slideshow/gallery_18.jpg" alt="" />
+      <img src="./slideshow/gallery_28.jpg" alt="" />
+      <img src="./slideshow/gallery_29.jpg" alt="" />
+      <img src="./slideshow/gallery_35.jpg" alt="" />
+      <img src="./slideshow/gallery_38.jpg" alt="" />
+      <img src="./slideshow/gallery_40.jpg" alt="" />
+      <img src="./slideshow/gallery_53.jpg" alt="" />
+      <img src="./slideshow/gallery_55.jpg" alt="" />
+      <img src="./slideshow/gallery_56.jpg" alt="" />
+      <img src="./slideshow/gallery_72.jpg" alt="" />
+      <img src="./slideshow/gallery_73.jpg" alt="" />
+      <img src="./slideshow/gallery_74.jpg" alt="" />
+      <img src="./slideshow/gallery_76.jpg" alt="" />
+      <img src="./slideshow/gallery_19.jpg" alt="" />
+      <img src="./slideshow/gallery_22.jpg" alt="" />
+      <img src="./slideshow/gallery_27.jpg" alt="" />
+      <img src="./slideshow/gallery_30.jpg" alt="" />
+      <img src="./slideshow/gallery_31.jpg" alt="" />
+      <img src="./slideshow/gallery_32.jpg" alt="" />
+      <img src="./slideshow/gallery_33.jpg" alt="" />
+      <img src="./slideshow/gallery_34.jpg" alt="" />
+      <img src="./slideshow/gallery_36.jpg" alt="" />
+      <img src="./slideshow/gallery_37.jpg" alt="" />
+      <img src="./slideshow/gallery_39.jpg" alt="" />
+      <img src="./slideshow/gallery_45.jpg" alt="" />
+      <img src="./slideshow/gallery_46.jpg" alt="" />
+      <img src="./slideshow/gallery_60.jpg" alt="" />
+      <img src="./slideshow/gallery_63.jpg" alt="" />
+      <img src="./slideshow/gallery_69.jpg" alt="" />
+      <img src="./slideshow/gallery_70.jpg" alt="" />
+      <img src="./slideshow/gallery_71.jpg" alt="" />
+      <img src="./slideshow/gallery_75.jpg" alt="" />
+      <img src="./slideshow/gallery_89.jpg" alt="" />
+    </div>
+    <p class="hero-caption">Good Food Brings People Together.</p>
+    </div>
+  </section>
+  <script>
+    (function(){
+      const ss = document.getElementById('heroSlideshow');
+      const imgs = Array.from(ss.querySelectorAll('img'));
+      // Shuffle
+      for (let i = imgs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        ss.appendChild(imgs[j]);
+        [imgs[i], imgs[j]] = [imgs[j], imgs[i]];
+      }
+      // Reset active to first after shuffle
+      imgs.forEach(img => img.classList.remove('active'));
+      imgs[0].classList.add('active');
+      let cur = 0;
+      setInterval(() => {
+        imgs[cur].classList.remove('active');
+        cur = (cur + 1) % imgs.length;
+        imgs[cur].classList.add('active');
+      }, 3500);
+    })();
+  </script>
+
+
+  <!-- ── About ── -->
+  <section id="about">
+    <div class="about-inner">
+      <div class="about-images reveal">
+        <img class="about-img-main" src="./slideshow/gallery_2.jpg" alt="Le Bon Viêt" />
+      </div>
+      <div class="about-text">
+        <p class="section-label reveal">About</p>
+        <h2 class="section-title reveal reveal-delay-1">
+          Shaped in<br>Los Angeles.<br><em style="white-space:nowrap;">Refined through experience.</em>
+        </h2>
+        <span class="gold-line gold-line-left reveal reveal-delay-2" style="margin-top:2rem;"></span>
+        <p class="section-body reveal reveal-delay-3">
+          Le Bon Viêt is guided by precision—but grounded in soul. Vietnamese at heart, refined through French technique, and expressed through a modern Los Angeles lens.
+        </p>
+        <a href="#story" class="about-cta reveal reveal-delay-4">Our Story</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Story / Parallax ── -->
+  <section id="story">
+    <div class="story-content">
+      <img class="story-door-logo reveal" src="./door.png" alt="Le Bon Viêt" />
+      <p class="section-label reveal reveal-delay-1">Heritage</p>
+      <h2 class="section-title reveal reveal-delay-1">
+        Crafting connection through food, memory, &amp; <em>shared experience.</em>
+      </h2>
+      <span class="gold-line reveal reveal-delay-2"></span>
+<p class="section-body reveal reveal-delay-4">
+        At Le Bon Viêt, we believe the most meaningful moments in life happen around the table. Our mission is to create food and experiences that foster connection—inspired by the memories that shaped us and the cultures that guide us.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Services ── -->
+  <section id="services">
+    <div class="services-header">
+      <div>
+        <p class="section-label reveal">What We Do</p>
+        <h2 class="section-title reveal reveal-delay-1">Services</h2>
+      </div>
+      <p class="section-body reveal reveal-delay-2" style="max-width:300px;text-align:right;font-size:0.82rem;">
+        Precision-driven work across every channel.
+      </p>
+    </div>
+
+    <!-- Category 01: Culinary Experiences -->
+    <div class="svc-category reveal">
+      <div class="svc-cat-left">
+        <span class="svc-cat-num">01</span>
+        <h3 class="svc-cat-name">Culinary<br><em>Experiences</em></h3>
+        <p class="svc-cat-tagline">Where memory and craft converge at the table.</p>
+      </div>
+      <div class="svc-cat-right">
+        <ul class="svc-list single-col">
+          <li>Intimate Dining Experiences</li>
+          <li>Multi-Course Tasting Menus</li>
+          <li>Personalized Meal Preparation</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Category 02: Hospitality & Restaurant Consulting -->
+    <div class="svc-category reveal">
+      <div class="svc-cat-left">
+        <span class="svc-cat-num">02</span>
+        <h3 class="svc-cat-name">Hospitality &amp;<br><em>Restaurant Consulting</em></h3>
+        <p class="svc-cat-tagline">From concept to operation—built with precision.</p>
+      </div>
+      <div class="svc-cat-right">
+        <ul class="svc-list">
+          <li>Restaurant Concept Development</li>
+          <li>Menu Design &amp; Culinary Strategy</li>
+          <li>Luxury Hospitality &amp; Private Estate Consulting</li>
+          <li>Operational Systems &amp; SOP Development</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Category 03: Chef Training & Education -->
+    <div class="svc-category reveal">
+      <div class="svc-cat-left">
+        <span class="svc-cat-num">03</span>
+        <h3 class="svc-cat-name">Chef Training<br>&amp; <em>Education</em></h3>
+        <p class="svc-cat-tagline">Developing the teams behind exceptional kitchens.</p>
+      </div>
+      <div class="svc-cat-right">
+        <ul class="svc-list single-col">
+          <li>In-House Chef Training</li>
+          <li>Private Estate Chef Coaching</li>
+          <li>Kitchen Systems, Service Standards &amp; Team Development</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Category 04: Specialized Expertise -->
+    <div class="svc-category reveal">
+      <div class="svc-cat-left">
+        <span class="svc-cat-num">04</span>
+        <h3 class="svc-cat-name">Specialized<br><em>Expertise</em></h3>
+        <p class="svc-cat-tagline svc-expertise-blurb">Built from years serving the world's most discerning private households and Michelin-caliber kitchens.</p>
+      </div>
+      <div class="svc-cat-right">
+        <ul class="svc-list">
+          <li>Ultra-High-Net-Worth Household Operations</li>
+          <li>Estate Kitchen Design &amp; Workflow Optimization</li>
+          <li>Luxury Service Standards &amp; Guest Experience</li>
+          <li>Executive Travel &amp; Remote Culinary Logistics</li>
+          <li>Confidentiality &amp; Discretion Protocols</li>
+          <li>Multi-Residence Culinary Operations</li>
+          <li>Inventory, Procurement &amp; Vendor Systems</li>
+          <li>Seasonal Menu Planning &amp; Nutritional Personalization</li>
+          <li>Cross-Cultural Luxury Dining</li>
+          <li>High-Performance Kitchen Leadership</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Values ── -->
+  <section id="values">
+    <div class="values-intro">
+      <p class="section-label reveal">Our Values</p>
+      <h2 class="section-title reveal reveal-delay-1">The principles<br>that guide us.</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <span class="value-num">01</span>
+        <h3 class="value-title">Dialed for Detail</h3>
+        <p class="value-body">We craft products, meals, and memories with a precise eye. Nothing is accidental. Everything is intentional.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-1">
+        <span class="value-num">02</span>
+        <h3 class="value-title">Consistency in All</h3>
+        <p class="value-body">This is how we honor our patrons. Every ingredient, every product, every touchpoint—aligned and repeatable.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-2">
+        <span class="value-num">03</span>
+        <h3 class="value-title">One Team, One Dream</h3>
+        <p class="value-body">We operate as one organism—kitchen, service, and brand. Ego disrupts flow. Humility builds excellence.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-3">
+        <span class="value-num">04</span>
+        <h3 class="value-title">Carefully Crafted</h3>
+        <p class="value-body">Vietnamese tradition meets French discipline. Handled with care—never rushed, never careless.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-4">
+        <span class="value-num">05</span>
+        <h3 class="value-title">Clarity Through Cleanliness</h3>
+        <p class="value-body">Clean kitchens. Clean visuals. Clean flavors. Mise en place is not a task—it's a mindset.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-5">
+        <span class="value-num">06</span>
+        <h3 class="value-title">Sharing the Moment</h3>
+        <p class="value-body">Moments happen every day—we shape them into memories through food, story, and intention.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact ── -->
+  <section id="contact">
+    <div class="contact-inner">
+      <p class="section-label reveal" style="color:var(--gold-lt);">Get In Touch</p>
+      <h2 class="section-title reveal reveal-delay-1">Ready to<br><em>Collaborate?</em></h2>
+      <span class="gold-line reveal reveal-delay-2"></span>
+      <p class="section-body reveal reveal-delay-3">Let's create something epic together.</p>
+
+      <form class="contact-form reveal reveal-delay-4" action="mailto:MAISONLEBONVIET@GMAIL.COM" method="post" enctype="text/plain">
+        <div class="form-group">
+          <input type="text" name="firstname" placeholder="First Name" required />
+        </div>
+        <div class="form-group">
+          <input type="text" name="lastname" placeholder="Last Name" required />
+        </div>
+        <div class="form-group full">
+          <input type="email" name="email" placeholder="Email Address" required />
+        </div>
+        <div class="form-group full">
+          <textarea name="message" placeholder="Message"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Send Message</button>
+      </form>
+
+      <a href="mailto:MAISONLEBONVIET@GMAIL.COM" class="contact-email">MAISONLEBONVIET@GMAIL.COM</a>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <a href="#" class="footer-logo">Le Bon Viêt</a>
+    <ul class="footer-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#story">Heritage</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="https://www.instagram.com/le_bon_viet/" target="_blank">Instagram</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 Le Bon Viêt &nbsp;·&nbsp; Fresh Feed LLC. All rights reserved.</p>
+  </footer>
+
+  <script>
+
+    // ── Nav scroll state ──────────────────────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // ── Reveal on scroll ─────────────────────────────────────
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer  = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+    revealEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
