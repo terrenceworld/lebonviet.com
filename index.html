@@ -662,10 +662,25 @@
       .hero-caption { display: none; }
 
       /* About — image above text, no overlap */
-      .about-inner { grid-template-columns: 1fr; padding: 0 2rem; gap: 2rem; }
+      .about-inner {
+        display: flex;
+        flex-direction: column;
+        padding: 0 2rem;
+        gap: 2.5rem;
+      }
       #about { padding: 4rem 0; }
-      .about-images { height: auto; }
-      .about-img-main { max-width: 100%; height: auto; max-height: 280px; object-fit: cover; }
+      .about-images {
+        position: static;
+        width: 100%;
+        overflow: hidden;
+        max-height: 300px;
+      }
+      .about-img-main {
+        width: 100%;
+        height: 300px;
+        max-width: 100%;
+        object-fit: cover;
+      }
 
       #services { padding: 5rem 2rem; }
       .services-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
