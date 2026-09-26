@@ -170,6 +170,9 @@
       letter-spacing: 0.1em;
     }
 
+    .nav-hamburger { display: none; }
+    .mobile-menu { display: none; }
+
     @media (max-width: 900px) {
       .gallery-grid { columns: 2; padding: 2rem; }
       .gallery-header { padding: 8rem 2rem 3rem; }
@@ -178,10 +181,58 @@
     @media (max-width: 560px) {
       .gallery-grid { columns: 1; }
       .nav-links { display: none; }
+      .nav-hamburger {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        cursor: pointer;
+        padding: 4px;
+        background: none;
+        border: none;
+      }
+      .nav-hamburger span {
+        display: block;
+        width: 22px;
+        height: 1.5px;
+        background: #1B2A4A;
+        transition: transform 0.3s, opacity 0.3s;
+      }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+      .mobile-menu {
+        position: fixed;
+        inset: 0;
+        background: rgba(255,255,255,0.97);
+        z-index: 99;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2.5rem;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a {
+        font-size: 0.75rem;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: #1B2A4A;
+        text-decoration: none;
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="./index.html#about" class="mobile-link">About</a>
+    <a href="./index.html#story" class="mobile-link">Heritage</a>
+    <a href="./index.html#services" class="mobile-link">Services</a>
+    <a href="./index.html#contact" class="mobile-link">Contact</a>
+    <a href="./gallery.html" class="mobile-link">Gallery</a>
+    <a href="https://www.instagram.com/le_bon_viet/" target="_blank" class="mobile-link">Instagram</a>
+  </div>
 
   <!-- Nav -->
   <nav>
@@ -193,6 +244,9 @@
       <li><a href="./index.html#contact">Contact</a></li>
       <li><a href="./gallery.html" class="active">Gallery</a></li>
     </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <!-- Header -->
@@ -333,6 +387,23 @@
       if (e.key === 'Escape') close();
       if (e.key === 'ArrowLeft') prev();
       if (e.key === 'ArrowRight') next();
+    });
+  </script>
+
+  <script>
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
     });
   </script>
 </body>
